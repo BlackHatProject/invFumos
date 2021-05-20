@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="bootstrap.min.css">
     <script src="jquery-3.5.1.min.js"></script>
 
-    <title>Hello, world!</title>
+    <title>Fumo Store</title>
 
   </head>
   <body class="bg-dark">
@@ -113,8 +113,6 @@
   </div>
 </div>
 
-  <!-- MODAL PARA ELIMINAR -->
-
   <!-- SCRIPT DEL BOOTSTRAP PARA LA ANIMACIONES Y EL USO DE LA MODAL -->
 
  <script src="bootstrap.min.js"></script>
@@ -125,9 +123,13 @@
 
 <script>
     $(document).ready(function(){
-        
+      
+        // Llamamos la function para mostrar los productos una vez ejecutado la pagina
+      
         mostrar()
-        
+      
+      
+        // Botones para insertar y editar los datos 
         $("#btnInsertar").click(function(e){
           e.preventDefault();
           insertar()
@@ -159,6 +161,8 @@ function insertar(){
         }
   })
 }
+  
+ // functions del crud con sus respectivo ajax()
 
 function editar(){
   var form = document.forms.namedItem("formeditar")
