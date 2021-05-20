@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="jquery-3.5.1.min.js"></script>
+
+    <title>Hello, world!</title>
+
+  </head>
+  <body class="bg-dark">
+
+      <div class="container-fluid">
+
+          <div class="container m-4 bg-light">
+
+              <!-- FORMULARIO DE REGISTRAR -->
+
+              <form class="row align-items-center" name="forminsertar" id="formInsertar" enctype="multipart/form-data">
+                  <div class="col-6 form-group">
+                      <label for="" class="m-2">Nombre</label>
+                      <input type="text" name="nombre" class="form-control">
+                  </div>
+                  <div class="col-5 custom-file">
+                    <input type="file" class="custom-file-input" name="imagen" id="insertarImagen" aria-describedby="inputGroupFileAddon01" accept="image/*">
+                    <label class="custom-file-label" for="insertarImagen">Buscar Imagen</label>
+                  </div>
+                  <div class="col-4 form-group">
+                      <label for="" class="m-2">cantidad</label>
+                      <input type="text" name="cantidad" class="form-control">
+                  </div>
+                  <div class="col-4 form-group">
+                      <label for="" class="m-2">precio</label>
+                      <input type="text" name="precio" class="form-control">
+                  </div>
+                  <div class="col-4 form-group">
+                      <button class="btn btn-primary px-5 py-2" type="submit" id="btnInsertar" value="insertar">Insertar</button>
+                  </div>
+              </form>
+
+              <!-- ALERTA DEL FORMULARIO -->
+
+              <div id="alert">
+                
+              </div>
+
+              <!-- TABLA DEPRODUCTOS -->
+
+              <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Imagen</th>
+                      <th scope="col">Nombre</th>
+                      <th scope="col">Cantidad</th>
+                      <th scope="col">precio</th>
+                      <th scope="col">opciones</th>  
+                    </tr>
+                  </thead>
+
+                  <!-- CUERPO DE LA TABLA (SE ENVIA LOS DATOS POR AJAX) -->
+                  <tbody id="mostrarDatos">
+                    
+                  </tbody>
+              </table>
+          </div>
+      </div>
+
+      <!-- MODAL PARA EDITAR -->
+
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- FORMULARIO PARA EDITAR (MODAL) -->
+        <form id="formEditar" name="formeditar" enctype="multipart/form-data">
+
+          <input type="hidden" name="id" id="idEditar" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="" class="col-form-label">Nombre</label>
+            <input type="text" class="form-control" name="nombre" id="nomEditar">
+          </div>
+          <div class="form-group">
+            <label for="" class="col-form-label">Cantidad</label>
+            <input type="text" class="form-control" name="cantidad" id="canEditar">
+          </div>
+          <div class="form-group">
+            <label for="" class="col-form-label">Precio</label>
+            <input type="text" class="form-control" name="precio" id="preEditar">
+          </div>
+          <div class="form-group custom-file">
+            <input type="file" class="custom-file-input" name="imagen" id="editarImagen" aria-describedby="inputGroupFileAddon01" accept="image/*">
+            <label class="custom-file-label" for="editarImagen">Buscar Imagen</label>
+          </div>
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" id="btnEditar">Editar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- MODAL PARA ELIMINAR -->
+
+  <!-- SCRIPT DEL BOOTSTRAP PARA LA ANIMACIONES Y EL USO DE LA MODAL -->
+
+ <script src="bootstrap.min.js"></script>
+
+  </body>
+</html>
+
+
+<script>
+    $(document).ready(function(){
+        
+        mostrar()
+        
+        $("#btnInsertar").click(function(e){
+          e.preventDefault();
+          insertar()
+        })
+
+        $("#btnEditar").click(function(e){
+          e.preventDefault();
+          editar()
+        })
+        
+    });
+
+function insertar(){
+  var form = document.forms.namedItem("forminsertar")
+  var datos = new FormData(form);
+  $.ajax({
+      url: 'insertar.php',
+      type: 'POST',
+      data: datos,
+      contentType: false,
+      processData: false,
+      success: function(res){
+          
+        let alert = `<div class="alert alert-success">${res}</div>`
+                    
+        $("#alert").html(alert);
+        mostrar()
+  
+        }
+  })
+}
+
+function editar(){
+  var form = document.forms.namedItem("formeditar")
+  var datos = new FormData(form);
+  $.ajax({
+    url: 'editar.php',
+    type: 'POST',
+    data: datos,
+    contentType: false,
+    processData: false,
+    success: function(res){
+      
+      let alert = `<div class="alert alert-success">${res}</div>`
+                    
+      $("#alert").html(alert)
+      mostrar()
+    }
+  })
+}
+
+function buscarProducto(numero) {
+    $.ajax({
+        url: 'buscar.php',
+        type: 'POST',
+        data: {id:numero},
+        success: function(res){
+            let datos = JSON.parse(res)
+            $("#idEditar").val(datos.id)
+            $("#nomEditar").val(datos.nombre)
+            $("#canEditar").val(datos.cantidad)
+            $("#preEditar").val(datos.precio)
+        }
+    })
+}
+
+function mostrar(){
+    $.ajax({
+        beforeSend: function(){
+          let esperar = `<tr><td colspan="5"><img src="img/chen.gif" class="rounded mx-auto d-block" alt=""></td></tr>`;
+          $("#mostrarDatos").html(esperar);
+        },
+        url: 'mostrar.php',
+        type: 'POST',
+        success: function(res){
+            let datos = JSON.parse(res)
+            let lista = ''
+            
+            datos.forEach(dato => {
+                lista += `
+                    <tr>
+                      <td><img style="width:130px;height:130px" src="img/productos/${dato.imagen}"></td>
+                      <td><p class="my-5 mx-3">${dato.nombre}</p></td>
+                      <td><p class="my-5 mx-3">${dato.cantidad}</p></td>
+                      <td><p class="my-5 mx-3">${dato.precio}</p></td>
+                      <td>
+                        <button class="btn btn-success my-5 mx-1" data-toggle="modal" data-target="#modalEditar" onclick="buscarProducto(${dato.id})">Editar</button>
+                        <button class="btn btn-danger  my-5 mx-1" onclick="eliminarProducto(${dato.id})">Eliminar</button>
+                      </td>
+                    </tr>
+                `
+            })
+                
+            setTimeout(()=> {
+              $("#mostrarDatos").html(lista);
+            }, 1000);
+        }
+    })
+}
+
+function eliminarProducto(numero) {
+    $.ajax({
+        url: 'eliminar.php',
+        type: 'POST',
+        data: {id:numero},
+        success: function(res){
+            let alert = `<div class="alert alert-info">${res}</div>`
+                    
+            $("#alert").html(alert);
+            mostrar()
+        }
+    })  
+}
+</script>
